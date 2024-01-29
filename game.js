@@ -1,3 +1,5 @@
+
+
 class Main extends Phaser.Scene {
 
     // This function essentially loads things into our game
@@ -12,7 +14,6 @@ class Main extends Phaser.Scene {
     //  create objects within our game such as animations, collision detectors, text, groups, and much more
     create() {
         //Додаємо літак на сцену
-        this.physics.add.overlap(this.plane, this.pipes, this.hitPipe, null, this);
         this.plane = this.physics.add.sprite(0, 0, 'plane')
         //Масштабуємо літак
         this.plane.setScale(0.65, 0.65);
@@ -25,12 +26,11 @@ class Main extends Phaser.Scene {
             repeat: -1
         });
         this.plane.play("planeAnimation");
-        
+
         this.plane.body.gravity.y = 1000;
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.score = 0;
         this.labelScore = this.add.text(20, 20, "0", {fontSize: 24, color: "black"});
-
         this.pipes = this.physics.add.group();
 
         this.timedEvent = this.time.addEvent({
@@ -39,32 +39,7 @@ class Main extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-        //Функція для створення блоку труби
-        
-    }
-
-    // While preload() and create() run only once at the start of the game, update() runs constantly.
-    update() {
-        if (this.plane.angle < 20) {
-            this.plane.angle += 1;
-        }
-        
-        if (this.plane.y < 0 || this.plane.y > 490) {
-            this.scene.restart();
-        }
-        if (this.spaceBar.isDown) {
-            this.jump();
-        }
-    }
-
-    jump() {
-        this.tweens.add({
-            targets: this.plane,
-            angle: -20,
-            duration: 100,
-            repeat: 1
-        });
-        this.plane.body.velocity.y = -350;
+        this.physics.add.overlap(this.plane, this.pipes, this.hitPipe, null, this);
     }
 
     hitPipe () {
@@ -77,13 +52,13 @@ class Main extends Phaser.Scene {
             pipe.body.velocity.x = 0;
         });
     }
-
+        //Функція для створення блоку труби
     addOnePipe(x, y) {
         var pipe = this.physics.add.sprite(x, y, 'pipe');
         pipe.setOrigin(0, 0);
         this.pipes.add(pipe);
         pipe.body.velocity.x = -300;
-    
+
         pipe.collideWorldBounds = true;
         pipe.outOfBoundsKill = true;
     }
@@ -97,9 +72,29 @@ class Main extends Phaser.Scene {
                 this.addOnePipe(400, i * 60 + 10);
         }
     }
+    // While preload() and create() run only once at the start of the game, update() runs constantly.
+    update() {
+        if (this.plane.angle < 20) {
+            this.plane.angle += 1;
+        }
+        
+        if (this.plane.y < 0 || this.plane.y > 490) {
+            this.scene.restart();
+        }
+        if (this.spaceBar.isDown) {
+            this.jump();
+        }
+    }
+    jump() {
+        this.tweens.add({
+            targets: this.plane,
+            angle: -20,
+            duration: 100,
+            repeat: 1
+        });
+        this.plane.body.velocity.y = -350;
+    }
 }
-
-
 const config = {
     type: Phaser.AUTO,
     width: 400,
@@ -109,7 +104,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 400}
+            gravity: {y: 0}
         }
     }
 };
